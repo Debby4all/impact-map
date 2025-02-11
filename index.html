@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Impact Map</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+        #map {
+            width: 100%;
+            height: 500px;
+            max-width: 900px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        #summary {
+            width: 100%;
+            max-width: 900px;
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        #summary h2 {
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+
+    <!-- Include Leaflet CSS (HTTPS) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h2>Our Global Impact</h2>
+        <div id="map"></div>
+        <div id="summary">
+            <h2>Impact Overview</h2>
+            <p><strong>Total Reach (Countries):</strong> <span id="total-reach">0</span></p>
+            <p><strong>Total Collaborators:</strong> <span id="total-collaborators">0</span></p>
+        </div>
+    </div>
+
+    <!-- Include Leaflet JavaScript (HTTPS) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize the map
+            var map = L.map('map').setView([10, 10], 2); // Center on the world
+
+            // Add OpenStreetMap tiles (forced HTTPS)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Impact Data
+            var impactData = [
+                { 
+                    country: "Nigeria", 
+                    lat: 9.082, 
+                    lng: 8.6753, 
+                    collaborators: ["Women's Equality Space"], 
+                    color: "green" 
+                },
+                { 
+                    country: "Kenya", 
+                    lat: -1.286389, 
+                    lng: 36.817223, 
+                    collaborators: [
+                        "Utopia Network",
+                        "Upinde Advocates for Inclusion",
+                        "Positive Young Women Voices",
+                        "Minority Womyn in Action"
+                    ], 
+                    color: "blue" 
+                },
+                { 
+                    country: "Argentina", 
+                    lat: -38.4161, 
+                    lng: -63.6167, 
+                    collaborators: ["AFDA"], 
+                    color: "purple" 
+                },
+                { 
+                    country: "Liberia", 
+                    lat: 6.4281, 
+                    lng: -9.4295, 
+                    collaborators: ["Sisters 4 Sisters"], 
+                    color: "yellow" 
+                },
+                { 
+                    country: "Thailand", 
+                    lat: 15.8700, 
+                    lng: 100.9925, 
+                    collaborators: [
+                        "Sapphic Pride",
+                        "Backyard Politics"
+                    ], 
+                    color: "pink" 
+                },
+                { 
+                    country: "Central Asia", 
+                    lat: 40.0, 
+                    lng: 65.0, 
+                    collaborators: ["ELC"], 
+                    color: "orange" 
+                }
+            ];
+
+            // Initialize summary variables
+            var totalReach = impactData.length; 
+            var totalCollaborators = new Set();
+
+            // Add markers to the map
+            impactData.forEach(function(data) {
+                L.circleMarker([data.lat, data.lng], {
+                    color: data.color,
+                    radius: 10 
+                }).addTo(map)
+                    .bindPopup(`
+                        <b>${data.country}</b><br>
+                        Collaborators: ${data.collaborators.join(", ")}
+                    `);
+
+                // Count unique collaborators
+                data.collaborators.forEach(collab => totalCollaborators.add(collab));
+            });
+
+            // Update summary
+            document.getElementById("total-reach").textContent = totalReach;
+            document.getElementById("total-collaborators").textContent = totalCollaborators.size;
+        });
+    </script>
+</body>
+</html>
