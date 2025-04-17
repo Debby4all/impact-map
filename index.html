@@ -39,9 +39,13 @@
             font-size: 20px;
             color: #333;
         }
+        .container h2:first-of-type {
+            font-size: 40px;
+            color: #A30262;
+        }
     </style>
 
-    <!-- Include Leaflet CSS (HTTPS) -->
+    <!-- Include Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
@@ -56,93 +60,55 @@
         </div>
     </div>
 
-    <!-- Include Leaflet JavaScript (HTTPS) -->
+    <!-- Include Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Initialize the map
-            var map = L.map('map').setView([10, 10], 2); // Center on the world
+            var map = L.map('map').setView([10, 10], 2);
 
-            // Add OpenStreetMap tiles (forced HTTPS)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // Impact Data
             var impactData = [
-                { 
-                    country: "Nigeria", 
-                    lat: 9.082, 
-                    lng: 8.6753, 
-                    collaborators: ["Women's Equality Space"], 
-                    color: "green" 
-                },
-                { 
-                    country: "Kenya", 
-                    lat: -1.286389, 
-                    lng: 36.817223, 
-                    collaborators: [
-                        "Utopia Network",
-                        "Upinde Advocates for Inclusion",
-                        "Positive Young Women Voices",
-                        "Minority Womyn in Action"
-                    ], 
-                    color: "blue" 
-                },
-                { 
-                    country: "Argentina", 
-                    lat: -38.4161, 
-                    lng: -63.6167, 
-                    collaborators: ["AFDA"], 
-                    color: "purple" 
-                },
-                { 
-                    country: "Liberia", 
-                    lat: 6.4281, 
-                    lng: -9.4295, 
-                    collaborators: ["Sisters 4 Sisters"], 
-                    color: "yellow" 
-                },
-                { 
-                    country: "Thailand", 
-                    lat: 15.8700, 
-                    lng: 100.9925, 
-                    collaborators: [
-                        "Sapphic Pride",
-                        "Backyard Politics"
-                    ], 
-                    color: "pink" 
-                },
-                { 
-                    country: "Central Asia", 
-                    lat: 40.0, 
-                    lng: 65.0, 
-                    collaborators: ["ELC"], 
-                    color: "orange" 
-                }
+                { country: "Nigeria", lat: 9.082, lng: 8.6753, collaborators: ["Women's Equality Space"], color: "green" },
+                { country: "Kenya", lat: -1.286389, lng: 36.817223, collaborators: ["Utopia Network", "Upinde Advocates for Inclusion", "Positive Young Women Voices", "Minority Womyn in Action"], color: "blue" },
+                { country: "Argentina", lat: -38.4161, lng: -63.6167, collaborators: ["AFDA"], color: "purple" },
+                { country: "Liberia", lat: 6.4281, lng: -9.4295, collaborators: ["Sisters 4 Sisters"], color: "yellow" },
+                { country: "Thailand", lat: 15.8700, lng: 100.9925, collaborators: ["Sapphic Pride", "Backyard Politics"], color: "pink" },
+                { country: "Central Asia", lat: 40.0, lng: 65.0, collaborators: ["ELC"], color: "orange" },
+
+                // LBQ Connect additions
+                { country: "Guyana", lat: 5.0000, lng: -58.7500, collaborators: ["Tamùkke Feminists (LBQ Connect)"], color: "red" },
+                { country: "Rwanda", lat: -1.9403, lng: 29.8739, collaborators: ["Ndabaga's Sisters (LBQ Connect)"], color: "red" },
+                { country: "Côte d’Ivoire", lat: 7.5399, lng: -5.5471, collaborators: ["Initiative Tilé (LBQ Connect)"], color: "red" },
+                { country: "Kenya (Kisumu)", lat: 0.0917, lng: 34.7679, collaborators: ["3W Kenya (LBQ Connect)"], color: "red" },
+                { country: "Tajikistan", lat: 38.8610, lng: 71.2761, collaborators: ["Local Partner (LBQ Connect)"], color: "red" },
+                { country: "Global Podcast", lat: 10.0000, lng: 0.0000, collaborators: ["LBQ Parenting Podcast Series"], color: "red" }
             ];
 
-            // Initialize summary variables
             var totalReach = impactData.length; 
             var totalCollaborators = new Set();
 
-            // Add markers to the map
             impactData.forEach(function(data) {
+                var isLBQConnect = data.collaborators.some(name => name.includes("LBQ Connect") || name.includes("Podcast"));
+            
                 L.circleMarker([data.lat, data.lng], {
-                    color: data.color,
-                    radius: 10 
+                    color: isLBQConnect ? '#A30262' : data.color,
+                    radius: isLBQConnect ? 12 : 10,
+                    weight: isLBQConnect ? 3 : 1,
+                    fillOpacity: 0.8
                 }).addTo(map)
-                    .bindPopup(`
-                        <b>${data.country}</b><br>
-                        Collaborators: ${data.collaborators.join(", ")}
-                    `);
-
-                // Count unique collaborators
+                  .bindPopup(`
+                      <b>${data.country}</b><br>
+                      Collaborators: ${data.collaborators.join(", ")}
+                  `);
+            
                 data.collaborators.forEach(collab => totalCollaborators.add(collab));
             });
 
-            // Update summary
+
             document.getElementById("total-reach").textContent = totalReach;
             document.getElementById("total-collaborators").textContent = totalCollaborators.size;
         });
