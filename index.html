@@ -40,8 +40,9 @@
             color: #333;
         }
         .container h2:first-of-type {
-            font-size: 40px;
+            font-size: 35px;
             color: #A30262;
+            font-weight: bold;
         }
     </style>
 
@@ -85,21 +86,25 @@
                 { country: "Côte d’Ivoire", lat: 7.5399, lng: -5.5471, collaborators: ["Initiative Tilé (LBQ Connect)"], color: "red" },
                 { country: "Kenya (Kisumu)", lat: 0.0917, lng: 34.7679, collaborators: ["3W Kenya (LBQ Connect)"], color: "red" },
                 { country: "Tajikistan", lat: 38.8610, lng: 71.2761, collaborators: ["Local Partner (LBQ Connect)"], color: "red" },
-                { country: "Global Podcast", lat: 10.0000, lng: 0.0000, collaborators: ["LBQ Parenting Podcast Series"], color: "red" }
-            
+                { country: "Global Podcast", lat: 10.0000, lng: 0.0000, collaborators: ["LBQ Parenting Podcast Series"], color: "red" },
+
                 // New organizations
                 { country: "Morocco", lat: 31.7917, lng: -7.0926, collaborators: ["FREE FEMINIST UNION"], color: "blue" },
                 { country: "Zambia", lat: -13.1339, lng: 27.8493, collaborators: ["WOMEN’S ALLIANCE FOR EQUALITY"], color: "purple" },
                 { country: "Zimbabwe", lat: -19.0154, lng: 29.1549, collaborators: ["VOICE OF THE VOICELESS (VOVO)"], color: "green" },
-                { country: "Kenya (Mombasa)", lat: -4.0435, lng: 39.6682, collaborators: ["THE INITIATIVE FOR EQUALITY AND NON-DISCRIMINATION (INEND)"], color: "orange" },
-                ];
+                { country: "Kenya (Mombasa)", lat: -4.0435, lng: 39.6682, collaborators: ["THE INITIATIVE FOR EQUALITY AND NON-DISCRIMINATION (INEND)"], color: "orange" }
+            ];
 
-            var totalReach = impactData.length; 
+            // Initialize summary variables
+            var totalReach = 0; 
             var totalCollaborators = new Set();
 
+            // Add markers to the map and recalculate totals
             impactData.forEach(function(data) {
+                totalReach++;
+
                 var isLBQConnect = data.collaborators.some(name => name.includes("LBQ Connect") || name.includes("Podcast"));
-            
+
                 L.circleMarker([data.lat, data.lng], {
                     color: isLBQConnect ? '#A30262' : data.color,
                     radius: isLBQConnect ? 12 : 10,
@@ -110,11 +115,12 @@
                       <b>${data.country}</b><br>
                       Collaborators: ${data.collaborators.join(", ")}
                   `);
-            
+
+                // Count unique collaborators
                 data.collaborators.forEach(collab => totalCollaborators.add(collab));
             });
 
-
+            // Update summary
             document.getElementById("total-reach").textContent = totalReach;
             document.getElementById("total-collaborators").textContent = totalCollaborators.size;
         });
